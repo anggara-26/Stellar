@@ -32,6 +32,18 @@ class LoginController extends GetxController {
     }
   }
 
+  void onLoginWithGoogle(AuthController controller) async {
+    final response = await controller.loginWithGoogle();
+    if (response != null) {
+      TAlertDialog.show(
+        response[1],
+        response[2],
+        Icons.cancel_outlined,
+        confirmText: "Kembali",
+      );
+    }
+  }
+
   bool get isEmailFieldEmpty => emailC.value.isEmpty;
   bool get isPasswordFieldEmpty => passC.value.isEmpty;
 }

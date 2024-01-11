@@ -72,7 +72,7 @@ class LoginView extends GetView<LoginController> {
             height: 24,
           ),
           TLoginOutlinedButton(
-            onPressed: () => {},
+            onPressed: () => controller.onLoginWithGoogle(authC),
             label: 'Sign in with Google',
             iconPath: 'assets/images/Google.png',
           ),

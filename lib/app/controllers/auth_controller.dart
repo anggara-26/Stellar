@@ -56,7 +56,7 @@ class AuthController extends GetxController {
     }
   }
 
-  void loginWithGoogle() async {
+  Future loginWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
@@ -66,15 +66,14 @@ class AuthController extends GetxController {
         idToken: googleAuth?.idToken,
       );
       await auth.signInWithCredential(credential);
-      print(credential);
-    } catch (error) {
-      print(error);
-      TAlertDialog.show(
-        "Terjadi Kesalahan",
-        "Periksa kembali isian anda dan tunggu beberapa saat",
-        Icons.error_outline,
-        confirmText: "Kembali",
-      );
+      Get.offAllNamed(Routes.HOME);
+      return null;
+    } catch (e) {
+      return [
+        'failed',
+        'Terjadi Kesalahan',
+        'Silahkan tunggu beberapa saat dan coba kembali'
+      ];
     }
   }
 
