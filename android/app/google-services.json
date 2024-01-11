@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "144495025008-opr4uiuk6ojlcmlgu9ppssqmvddmg49s.apps.googleusercontent.com",
+          "client_id": "144495025008-84o4dodbjbapq2br4fiv466jocc9f00g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.enigma.stellar",
+            "certificate_hash": "b306a6dd216baa3894c48c728c81eede68dca92e"
+          }
+        },
+        {
+          "client_id": "144495025008-bc1cjhtea1ehk4hm5i1n49a0tv7aj6s7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +35,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "144495025008-opr4uiuk6ojlcmlgu9ppssqmvddmg49s.apps.googleusercontent.com",
+              "client_id": "144495025008-bc1cjhtea1ehk4hm5i1n49a0tv7aj6s7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "144495025008-q3b27hha8heuk5eknne6m1a9enojle85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.stellar"
+              }
             }
           ]
         }
@@ -43,7 +58,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "144495025008-opr4uiuk6ojlcmlgu9ppssqmvddmg49s.apps.googleusercontent.com",
+          "client_id": "144495025008-3l7rij3il45g2ggklmhq2aihoavcufce.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stellar",
+            "certificate_hash": "b306a6dd216baa3894c48c728c81eede68dca92e"
+          }
+        },
+        {
+          "client_id": "144495025008-bc1cjhtea1ehk4hm5i1n49a0tv7aj6s7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -56,8 +79,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "144495025008-opr4uiuk6ojlcmlgu9ppssqmvddmg49s.apps.googleusercontent.com",
+              "client_id": "144495025008-bc1cjhtea1ehk4hm5i1n49a0tv7aj6s7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "144495025008-q3b27hha8heuk5eknne6m1a9enojle85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.stellar"
+              }
             }
           ]
         }

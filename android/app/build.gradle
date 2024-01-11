@@ -22,6 +22,8 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+apply plugin: 'com.google.gms.google-services'
+
 android {
     namespace "com.enigma.stellar"
     compileSdkVersion flutter.compileSdkVersion
@@ -66,5 +68,6 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-bom:29.0.3'
     implementation 'com.android.support:multidex:1.0.3'
 }
