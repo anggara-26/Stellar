@@ -61,7 +61,7 @@ class LoginView extends GetView<LoginController> {
           ),
           TLoginTextButton(
             onPressed: () => Get.toNamed(Routes.REGISTER),
-            regularText: "Belum pernah memiliki akun? ",
+            regularText: "Belum pernah memiliki akun?",
             highLightedText: "Daftar!",
           ),
           const SizedBox(
