@@ -11,6 +11,7 @@ dependencies:
   firebase_core: 2.24.2
   firebase_auth: 4.16.0
   google_sign_in: 6.2.1
+  percent_indicator: 4.2.3
   flutter:
     sdk: flutter
 
@@ -65,6 +66,32 @@ flutter:
         - asset: assets/fonts/poppins/Poppins-Thin.ttf
           weight: 100
         - asset: assets/fonts/poppins/Poppins-ThinItalic.ttf
+          style: italic
+          weight: 100
+    - family: sf-pro-display
+      fonts:
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYBLACKITALIC.OTF
+          style: italic
+          weight: 900
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYHEAVYITALIC.OTF
+          style: italic
+          weight: 800
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYBOLD.OTF
+          weight: 700
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYSEMIBOLDITALIC.OTF
+          style: italic
+          weight: 600
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYMEDIUM.OTF
+          weight: 500
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYREGULAR.OTF
+          weight: 400
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYLIGHTITALIC.OTF
+          style: italic
+          weight: 300
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYTHINITALIC.OTF
+          style: italic
+          weight: 200
+        - asset: assets/fonts/sf_pro_display/SFPRODISPLAYULTRALIGHTITALIC.OTF
           style: italic
           weight: 100
   uses-material-design: true
