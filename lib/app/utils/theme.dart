@@ -75,13 +75,13 @@ class TAppTheme {
       fontFamily: "poppins",
       color: TColors.primaryColor,
       fontSize: 16.0,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
     ),
     displaySmall: TextStyle(
       fontFamily: "poppins",
       color: TColors.primaryColor,
       fontSize: 14.0,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
     ),
   );
 
