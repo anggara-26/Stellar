@@ -105,18 +105,12 @@ class THomeBanner extends StatelessWidget {
 }
 
 class THomeTerdekat extends StatelessWidget {
-  final double sqmIndex;
-  final String city;
-  final String subdistrict;
-  const THomeTerdekat({
-    required this.sqmIndex,
-    required this.city,
-    required this.subdistrict,
-    super.key,
-  });
+  final Map<String, dynamic> data;
+  const THomeTerdekat(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = LightController();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14.0),
       child: Container(
@@ -142,15 +136,15 @@ class THomeTerdekat extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 width: 116,
                 child: OverflowBox(
                   alignment: Alignment.centerLeft,
                   maxHeight: 116,
                   maxWidth: 116,
                   child: Container(
-                    padding: EdgeInsets.all(14.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(14.0),
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
@@ -158,7 +152,7 @@ class THomeTerdekat extends StatelessWidget {
                       radius: 44.0,
                       lineWidth: 8.0,
                       animation: true,
-                      percent: ((sqmIndex - 17.0) * 20.0) / 100.0,
+                      percent: controller.getPercentageScale(data['sqmIndex']),
                       circularStrokeCap: CircularStrokeCap.round,
                       progressColor: const Color(0xFF94959A),
                       center: Column(
@@ -166,9 +160,9 @@ class THomeTerdekat extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            '24',
+                            data['sqmIndex'].toString(),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18.0,
                               fontFamily: 'sf-pro-display',
                               fontWeight: FontWeight.w700,
@@ -176,7 +170,7 @@ class THomeTerdekat extends StatelessWidget {
                               height: 0.9,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'SQM',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -192,13 +186,13 @@ class THomeTerdekat extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Jakarta',
-                    style: TextStyle(
+                    data['city'],
+                    style: const TextStyle(
                       fontSize: 20.0,
                       fontFamily: 'sf-pro-display',
                       color: Color(0xFF151522),
@@ -206,25 +200,25 @@ class THomeTerdekat extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.my_location_outlined,
                         size: 10.0,
                         color: TColors.primaryColor,
                       ),
-                      SizedBox(width: 4.0),
+                      const SizedBox(width: 4.0),
                       Text(
-                        'Kalideres, Jakarta',
-                        style: TextStyle(
+                        '${data['subdistrict']}, ${data['city']}',
+                        style: const TextStyle(
                           fontSize: 10.0,
                           fontFamily: 'sf-pro-display',
                         ),
                       ),
                     ],
                   ),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: SizedBox()),
                   Text(
-                    'Daerah anda aman dari polusi cahaya',
-                    style: TextStyle(
+                    controller.categorizeIndex(data['sqmIndex']),
+                    style: const TextStyle(
                       fontSize: 10.0,
                       fontFamily: 'sf-pro-display',
                       fontStyle: FontStyle.italic,
@@ -233,21 +227,21 @@ class THomeTerdekat extends StatelessWidget {
                   ),
                 ],
               ),
-              Expanded(child: SizedBox()),
-              Container(
+              const Expanded(child: SizedBox()),
+              SizedBox(
                 width: 24.0,
                 height: 24.0,
                 child: IconButton(
                   onPressed: () {},
                   padding: EdgeInsets.zero,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.favorite_outline,
                     size: 24.0,
                   ),
                   // iconSize: 24.0,
                 ),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
             ],
           ),
         ),
@@ -272,7 +266,6 @@ class THomeFavoriteBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('$sqmIndex - 17.0 * 20 = ${(sqmIndex - 17.0) * 20}');
     final controller = LightController();
     return Padding(
       padding: const EdgeInsets.only(right: 4.0),
@@ -282,9 +275,9 @@ class THomeFavoriteBox extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
           fixedSize: const Size(176, 0),
           backgroundColor: Color.lerp(
-            Colors.grey[500],
+            Colors.grey[300],
             TColors.primaryColor,
-            ((sqmIndex - 18.0) * 25.0) / 100.0,
+            ((sqmIndex - 17.0) * 20.0) / 100.0,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -300,21 +293,27 @@ class THomeFavoriteBox extends StatelessWidget {
                 text: TextSpan(
                   children: <TextSpan>[
                     TextSpan(
-                        text: sqmIndex.toString(),
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontFamily: 'sf-pro-display',
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        )),
-                    const TextSpan(
-                        text: ' sqm',
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontFamily: 'sf-pro-display',
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        )),
+                      text: sqmIndex.toString(),
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontFamily: 'sf-pro-display',
+                        fontWeight: FontWeight.w700,
+                        color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' sqm',
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        fontFamily: 'sf-pro-display',
+                        fontWeight: FontWeight.w700,
+                        color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -322,20 +321,24 @@ class THomeFavoriteBox extends StatelessWidget {
             const Expanded(child: SizedBox()),
             Text(
               controller.categorizeIndex(sqmIndex),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
                 fontFamily: 'sf-pro-display',
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                    ? Colors.white
+                    : Colors.black,
               ),
             ),
             const SizedBox(height: 4.0),
             Text(
               '$subdistrict, $city',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10.0,
                 fontFamily: 'sf-pro-display',
-                color: Colors.white,
+                color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                    ? Colors.white
+                    : Colors.black,
               ),
             ),
           ],
@@ -381,10 +384,10 @@ class THomeAddFavoriteBox extends StatelessWidget {
             Text(
               'Klik untuk\ntambah favorit',
               style: TextStyle(
-                color: Colors.white,
                 fontSize: 12.0,
-                fontWeight: FontWeight.w700,
                 fontFamily: 'sf-pro-display',
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
           ],
@@ -421,6 +424,213 @@ class THomeFavoriteList extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+}
+
+class THomeDeviceBox extends StatelessWidget {
+  final VoidCallback onPressed;
+  final double sqmIndex;
+
+  const THomeDeviceBox({
+    required this.onPressed,
+    required this.sqmIndex,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = LightController();
+    return Padding(
+      padding: const EdgeInsets.only(right: 4.0),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+          fixedSize: const Size(192, 0),
+          backgroundColor: TColors.primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Icon(
+                  Icons.lightbulb_outline,
+                  size: 28,
+                ),
+                Container(
+                  width: 28.0,
+                  height: 28.0,
+                  decoration: BoxDecoration(
+                    color: Color.lerp(
+                      Colors.grey[300],
+                      const Color.fromARGB(255, 51, 81, 138),
+                      ((sqmIndex - 17.0) * 20.0) / 100.0,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      sqmIndex.toInt().toString(),
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        fontFamily: 'sf-pro-display',
+                        fontWeight: FontWeight.w700,
+                        color: ((sqmIndex - 17.0) * 20.0) > 40.0
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const Expanded(child: SizedBox()),
+            Text(
+              controller.categorizeIndex(sqmIndex),
+              style: const TextStyle(
+                fontSize: 12.0,
+                fontFamily: 'sf-pro-display',
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            const Text(
+              'Smart Light',
+              style: TextStyle(
+                fontSize: 10.0,
+                fontFamily: 'sf-pro-display',
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class THomeDeviceList extends StatelessWidget {
+  final List<Map<String, dynamic>> data;
+  const THomeDeviceList(this.data, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 128,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemCount: data.length + 1,
+        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+        itemBuilder: (context, index) {
+          if (index < data.length) {
+            return THomeDeviceBox(
+              onPressed: () {},
+              sqmIndex: data[index]['sqmIndex'],
+            );
+          } else {
+            return IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.add_circle_outline),
+              iconSize: 32.0,
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class THomeHighlighBox extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String backgroundImage;
+  final String text;
+  const THomeHighlighBox({
+    required this.onPressed,
+    required this.backgroundImage,
+    required this.text,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      margin: const EdgeInsets.only(bottom: 10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.0),
+        image: DecorationImage(
+          image: AssetImage(backgroundImage),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          alignment: Alignment.bottomCenter,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 14.0,
+          ),
+          fixedSize: const Size(double.infinity, double.infinity),
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6.0),
+          ),
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 8.0),
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'sf-pro-display',
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_outlined,
+              size: 32.0,
+              color: TColors.primaryColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class THomeHighlightList extends StatelessWidget {
+  final List<Map<String, String>> data;
+  const THomeHighlightList(this.data, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemCount: data.length,
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      itemBuilder: (context, index) {
+        return THomeHighlighBox(
+          onPressed: () {},
+          backgroundImage: data[index]['imageUrl'] ?? '',
+          text: data[index]['text'] ?? '',
+        );
+      },
     );
   }
 }

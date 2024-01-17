@@ -9,8 +9,27 @@ import '../controllers/home_controller.dart';
 class HomeView extends GetView<HomeController> {
   final authC = Get.find<AuthController>();
   final List<Map<String, dynamic>> dummyFavoriteData = [
-    {'sqmIndex': 18.48, 'city': 'Tangerang Selatan', 'subdistrict': 'Serpong'},
+    {'sqmIndex': 17.0, 'city': 'Tangerang Selatan', 'subdistrict': 'Serpong'},
     {'sqmIndex': 18.60, 'city': 'Depok', 'subdistrict': 'Margonda'},
+    {'sqmIndex': 21.60, 'city': 'Harapan Indah', 'subdistrict': 'Taman Sari'},
+  ];
+  final Map<String, dynamic> dummyTerdekatData = {
+    'sqmIndex': 21.0,
+    'city': 'Jakarta',
+    'subdistrict': 'Kalideres'
+  };
+  final List<Map<String, dynamic>> dummyDeviceData = [
+    {'sqmIndex': 19.0},
+  ];
+  final List<Map<String, String>> dummyHighlightData = [
+    {
+      'imageUrl': 'assets/images/highlight_1.png',
+      'text': 'Petunjuk Fitur Aplikasi Stellar'
+    },
+    {
+      'imageUrl': 'assets/images/highlight_2.png',
+      'text': 'Pengertian dan dampak polusi cahaya'
+    }
   ];
 
   @override
@@ -46,14 +65,19 @@ class HomeView extends GetView<HomeController> {
           const SizedBox(height: 24.0),
           const THomeSectionTitle(title: 'Terdekat'),
           const SizedBox(height: 12.0),
-          THomeTerdekat(
-              sqmIndex: 17.95, city: 'Jakarta', subdistrict: 'Kalideres'),
+          THomeTerdekat(dummyTerdekatData),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Favorit'),
           const SizedBox(height: 12.0),
           THomeFavoriteList(dummyFavoriteData),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Perangkat Saya'),
+          const SizedBox(height: 12.0),
+          THomeDeviceList(dummyDeviceData),
+          const SizedBox(height: 12.0),
+          const THomeSectionTitle(title: 'Highlight'),
+          const SizedBox(height: 12.0),
+          THomeHighlightList(dummyHighlightData),
           const SizedBox(height: 12.0),
         ],
       ),
