@@ -16,8 +16,8 @@ class RegisterController extends GetxController {
   }
 
   void onRegister(AuthController controller) async {
-    final response =
-        await controller.register(fullNameC.text, emailC.text, passC.text);
+    final response = await controller.register(
+        fullNameC.text, emailC.text, phoneNumberC.text, passC.text);
     if (response[0] == 'success') {
       TAlertDialog.show(
         "Berhasil",

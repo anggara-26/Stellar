@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,8 @@ import 'package:stellar/app/routes/app_pages.dart';
 
 class AuthController extends GetxController {
   Timer? checkTimer;
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Stream<User?> get streamAuthStatus => auth.authStateChanges();
 
@@ -64,6 +66,13 @@ class AuthController extends GetxController {
         idToken: googleAuth?.idToken,
       );
       await auth.signInWithCredential(credential);
+      final User? user = auth.currentUser;
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'display name': user.displayName,
+        'email': user.email,
+        'phone number': user.phoneNumber,
+        'favorite sqm indexes': [],
+      });
       Get.offAllNamed(Routes.HOME);
       return null;
     } catch (e) {
@@ -75,7 +84,8 @@ class AuthController extends GetxController {
     }
   }
 
-  Future register(String fullName, String email, String password) async {
+  Future register(String fullName, String email, String phoneNumberC,
+      String password) async {
     if (fullName.isEmpty || email.isEmpty || password.isEmpty) {
       return [
         'failed',
@@ -87,8 +97,14 @@ class AuthController extends GetxController {
       final credential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
       final User? user = credential.user;
-      user?.updateDisplayName(fullName);
-      if (user!.emailVerified) {
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'display name': fullName,
+        'email': email,
+        'phone number': phoneNumberC,
+        'favorite sqm indexes': [],
+      });
+      user.updateDisplayName(fullName);
+      if (user.emailVerified) {
         Get.offAllNamed(Routes.HOME);
         return null;
       } else {
