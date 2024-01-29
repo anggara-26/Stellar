@@ -5,6 +5,7 @@ import 'package:stellar/app/utils/colors.dart';
 class TAppTheme {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
+    colorScheme: ColorScheme.fromSeed(seedColor: TColors.primaryColor),
     primaryColor: TColors.primaryColor,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: appBarTheme,
