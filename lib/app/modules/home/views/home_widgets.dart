@@ -1,12 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:stellar/app/controllers/light_controller.dart';
 import 'package:stellar/app/utils/colors.dart';
 
 class THomeDisplayName extends StatelessWidget {
-  final String? name;
   const THomeDisplayName(this.name, {super.key});
+
+  final String? name;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +22,9 @@ class THomeDisplayName extends StatelessWidget {
 }
 
 class THomeSectionTitle extends StatelessWidget {
-  final String title;
   const THomeSectionTitle({required this.title, super.key});
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +44,6 @@ class THomeSectionTitle extends StatelessWidget {
 }
 
 class THomeBanner extends StatelessWidget {
-  final VoidCallback onPressed;
-  final ImageProvider backgroundImage;
-  final IconData icon;
-  final String text;
   const THomeBanner({
     required this.onPressed,
     required this.backgroundImage,
@@ -53,6 +51,11 @@ class THomeBanner extends StatelessWidget {
     required this.text,
     super.key,
   });
+
+  final VoidCallback onPressed;
+  final ImageProvider backgroundImage;
+  final IconData icon;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -105,12 +108,19 @@ class THomeBanner extends StatelessWidget {
 }
 
 class THomeTerdekat extends StatelessWidget {
+  const THomeTerdekat({
+    required this.data,
+    required this.categorizeIndex,
+    required this.getPercentageScale,
+    super.key,
+  });
+
   final Map<String, dynamic> data;
-  const THomeTerdekat(this.data, {super.key});
+  final String Function(num) categorizeIndex;
+  final double Function(num) getPercentageScale;
 
   @override
   Widget build(BuildContext context) {
-    final controller = LightController();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14.0),
       child: Container(
@@ -152,7 +162,7 @@ class THomeTerdekat extends StatelessWidget {
                       radius: 44.0,
                       lineWidth: 8.0,
                       animation: true,
-                      percent: controller.getPercentageScale(data['sqmIndex']),
+                      percent: getPercentageScale(data['sqmIndex']),
                       circularStrokeCap: CircularStrokeCap.round,
                       progressColor: const Color(0xFF94959A),
                       center: Column(
@@ -217,7 +227,7 @@ class THomeTerdekat extends StatelessWidget {
                   ),
                   const Expanded(child: SizedBox()),
                   Text(
-                    controller.categorizeIndex(data['sqmIndex']),
+                    categorizeIndex(data['sqmIndex']),
                     style: const TextStyle(
                       fontSize: 10.0,
                       fontFamily: 'sf-pro-display',
@@ -250,27 +260,116 @@ class THomeTerdekat extends StatelessWidget {
   }
 }
 
-class THomeFavoriteBox extends StatelessWidget {
-  final VoidCallback onPressed;
-  final double sqmIndex;
-  final String city;
-  final String subdistrict;
-
-  const THomeFavoriteBox({
-    required this.onPressed,
-    required this.sqmIndex,
-    required this.city,
-    required this.subdistrict,
+class THomeFavoriteList extends StatelessWidget {
+  const THomeFavoriteList({
+    required this.onLongPressCard,
+    required this.getUserFavoriteSqmIndexList,
+    required this.streamFavoriteSqmIndex,
+    required this.loadSqmIndexes,
+    required this.categorizeIndex,
+    required this.getPercentageScale,
     super.key,
   });
 
+  final void Function(String, String) onLongPressCard;
+  final Stream<DocumentSnapshot<Map<String, dynamic>>> Function()
+      getUserFavoriteSqmIndexList;
+  final Stream<DocumentSnapshot<Map<String, dynamic>>> Function(String)
+      streamFavoriteSqmIndex;
+  final Future<List<Map<String, dynamic>>> Function() loadSqmIndexes;
+  final String Function(num) categorizeIndex;
+  final double Function(num) getPercentageScale;
+
   @override
   Widget build(BuildContext context) {
-    final controller = LightController();
+    return SizedBox(
+      height: 112,
+      child: StreamBuilder<DocumentSnapshot>(
+        stream: getUserFavoriteSqmIndexList(),
+        builder: (BuildContext context,
+            AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+          final favoriteIds = userSnapshot.data?['favorite sqm indexes'] ?? [];
+          print(favoriteIds);
+          if (userSnapshot.hasError) {
+            return const Text('Something went wrong');
+          }
+          if (userSnapshot.connectionState == ConnectionState.active) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: favoriteIds.length + 1,
+              padding: const EdgeInsets.symmetric(horizontal: 14.0),
+              itemBuilder: (context, index) {
+                if (index < favoriteIds.length) {
+                  return StreamBuilder<dynamic>(
+                    stream: streamFavoriteSqmIndex(favoriteIds[index]),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<dynamic> snapshot,
+                    ) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        final favoriteData = snapshot.data ?? {};
+                        return THomeFavoriteBox(
+                          onLongPressed: onLongPressCard,
+                          categorizeIndex: categorizeIndex,
+                          id: favoriteIds[index],
+                          sqmIndex: favoriteData['sqm index'],
+                          district: favoriteData['district'],
+                          locationName: favoriteData['location name'],
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  );
+                } else {
+                  return THomeAddFavoriteBox(
+                    onPressed: () => showAddFavoriteModal(context, favoriteIds,
+                        loadSqmIndexes, getPercentageScale),
+                  );
+                }
+              },
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class THomeFavoriteBox extends StatelessWidget {
+  const THomeFavoriteBox({
+    required this.onLongPressed,
+    required this.categorizeIndex,
+    required this.id,
+    required this.sqmIndex,
+    required this.district,
+    required this.locationName,
+    super.key,
+  });
+
+  final void Function(String, String) onLongPressed;
+  final String Function(num) categorizeIndex;
+  final String id;
+  final num sqmIndex;
+  final String district;
+  final String locationName;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 4.0),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: () {},
+        onLongPress: () => onLongPressed(id, locationName),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
           fixedSize: const Size(176, 0),
@@ -298,7 +397,7 @@ class THomeFavoriteBox extends StatelessWidget {
                         fontSize: 18.0,
                         fontFamily: 'sf-pro-display',
                         fontWeight: FontWeight.w700,
-                        color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                        color: ((sqmIndex - 17.0) * 20.0) > 10.0
                             ? Colors.white
                             : Colors.black,
                       ),
@@ -309,7 +408,7 @@ class THomeFavoriteBox extends StatelessWidget {
                         fontSize: 10.0,
                         fontFamily: 'sf-pro-display',
                         fontWeight: FontWeight.w700,
-                        color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                        color: ((sqmIndex - 17.0) * 20.0) > 10.0
                             ? Colors.white
                             : Colors.black,
                       ),
@@ -320,23 +419,23 @@ class THomeFavoriteBox extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             Text(
-              controller.categorizeIndex(sqmIndex),
+              categorizeIndex(sqmIndex),
               style: TextStyle(
                 fontSize: 12.0,
                 fontFamily: 'sf-pro-display',
                 fontWeight: FontWeight.w700,
-                color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                color: ((sqmIndex - 17.0) * 20.0) > 10.0
                     ? Colors.white
                     : Colors.black,
               ),
             ),
             const SizedBox(height: 4.0),
             Text(
-              '$subdistrict, $city',
+              '$locationName, $district',
               style: TextStyle(
                 fontSize: 10.0,
                 fontFamily: 'sf-pro-display',
-                color: ((sqmIndex - 17.0) * 20.0) > 30.0
+                color: ((sqmIndex - 17.0) * 20.0) > 10.0
                     ? Colors.white
                     : Colors.black,
               ),
@@ -349,11 +448,12 @@ class THomeFavoriteBox extends StatelessWidget {
 }
 
 class THomeAddFavoriteBox extends StatelessWidget {
-  final VoidCallback onPressed;
   const THomeAddFavoriteBox({
     required this.onPressed,
     super.key,
   });
+
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -397,14 +497,308 @@ class THomeAddFavoriteBox extends StatelessWidget {
   }
 }
 
-class THomeFavoriteList extends StatelessWidget {
+Future<dynamic> showAddFavoriteModal(
+  BuildContext context,
+  List<dynamic> userFavoriteIds,
+  Future<List<Map<String, dynamic>>> Function() sqmIndexes,
+  double Function(num) getPercentageScale,
+) {
+  return showModalBottomSheet(
+    scrollControlDisabledMaxHeightRatio: 0.9,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(40.0),
+      ),
+    ),
+    backgroundColor: Colors.white,
+    context: context,
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        snap: true,
+        expand: false,
+        builder: (context, scrollController) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              // width: Get.size.width,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 12.0,
+              ),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24.0,
+                            vertical: 8.0,
+                          ),
+                        ),
+                        child: const Text(
+                          'Tutup',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            letterSpacing: 0.8,
+                            fontFamily: 'sf-pro-display',
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () => Get.back(),
+                      )
+                    ],
+                  ),
+                  const Text(
+                    'Tambah ke Favorit',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontFamily: 'sf-pro-display',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 14.0),
+                  const TextField(
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.zero),
+                        borderSide: BorderSide(
+                          color: TColors.primaryColor,
+                          width: 1.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.zero),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.zero),
+                      ),
+                      labelText: 'Cari kecamatan atau kota',
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Icon(
+                          Icons.search_outlined,
+                          size: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: sqmIndexes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        var sqmIndexesList = snapshot.data ?? [];
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const ClampingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemCount: sqmIndexesList.length,
+                          padding: const EdgeInsets.only(top: 10.0),
+                          itemBuilder: (context, i) {
+                            return THomeFavoriteModalSqmColumnCity(
+                              sqmIndexData: sqmIndexesList[i],
+                              userFavoriteIds: userFavoriteIds,
+                              getPercentageScale: getPercentageScale,
+                            );
+                          },
+                        );
+                      }
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 144.0),
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+class THomeFavoriteModalSqmColumnCity extends StatelessWidget {
+  const THomeFavoriteModalSqmColumnCity({
+    super.key,
+    required this.sqmIndexData,
+    required this.userFavoriteIds,
+    required this.getPercentageScale,
+  });
+
+  final Map<String, dynamic> sqmIndexData;
+  final List<dynamic> userFavoriteIds;
+  final double Function(num) getPercentageScale;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            sqmIndexData['city'],
+            style: const TextStyle(
+              fontSize: 14.0,
+              height: 2.5,
+              fontFamily: 'sf-pro-display',
+              fontWeight: FontWeight.w700,
+              color: TColors.primaryColor,
+            ),
+          ),
+          const Divider(),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: sqmIndexData['sqm list'].length,
+            itemBuilder: (context, j) {
+              return Column(
+                children: [
+                  THomeFavoriteModalSqmRowLocation(
+                    reference: sqmIndexData['sqm list'][j]['reference'],
+                    userFavoriteIds: userFavoriteIds,
+                    locationName: sqmIndexData['sqm list'][j]['location name'],
+                    district: sqmIndexData['sqm list'][j]['district'],
+                    sqmIndex: sqmIndexData['sqm list'][j]['sqm index'],
+                    getPercentageScale: getPercentageScale,
+                  ),
+                  const Divider(),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class THomeFavoriteModalSqmRowLocation extends StatelessWidget {
+  const THomeFavoriteModalSqmRowLocation({
+    super.key,
+    required this.reference,
+    required this.userFavoriteIds,
+    required this.locationName,
+    required this.district,
+    required this.sqmIndex,
+    required this.getPercentageScale,
+  });
+
+  final String reference;
+  final List<dynamic> userFavoriteIds;
+  final String locationName;
+  final String district;
+  final double sqmIndex;
+  final double Function(num) getPercentageScale;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              locationName,
+              style: const TextStyle(
+                fontSize: 14.0,
+                fontFamily: 'sf-pro-display',
+                fontWeight: FontWeight.w700,
+                color: TColors.primaryColor,
+              ),
+            ),
+            Text(
+              '$locationName, $district',
+              style: const TextStyle(
+                fontSize: 12.0,
+                fontFamily: 'sf-pro-display',
+                color: TColors.primaryColor,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            CircularPercentIndicator(
+              radius: 28.0,
+              lineWidth: 5.0,
+              animation: true,
+              percent: getPercentageScale(sqmIndex),
+              circularStrokeCap: CircularStrokeCap.round,
+              progressColor: TColors.primaryColor,
+              center: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    sqmIndex.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      fontFamily: 'sf-pro-display',
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF151522),
+                      height: 0.9,
+                    ),
+                  ),
+                  const Text(
+                    'SQM',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 8.0,
+                      fontFamily: 'sf-pro-display',
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E1E1E),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10.0),
+            IconButton(
+                onPressed: () {
+                  setState() {}
+                  ;
+                },
+                icon: Icon(
+                  userFavoriteIds.contains(reference)
+                      ? Icons.favorite_outlined
+                      : Icons.favorite_border_outlined,
+                  color: TColors.primaryColor,
+                  size: 28.0,
+                ))
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class THomeDeviceList extends StatelessWidget {
+  const THomeDeviceList({
+    required this.data,
+    required this.categorizeIndex,
+    super.key,
+  });
+
   final List<Map<String, dynamic>> data;
-  const THomeFavoriteList(this.data, {super.key});
+  final String Function(num) categorizeIndex;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 112,
+      height: 128,
       child: ListView.builder(
         shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
@@ -413,14 +807,17 @@ class THomeFavoriteList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14.0),
         itemBuilder: (context, index) {
           if (index < data.length) {
-            return THomeFavoriteBox(
+            return THomeDeviceBox(
               onPressed: () {},
               sqmIndex: data[index]['sqmIndex'],
-              city: data[index]['city'],
-              subdistrict: data[index]['subdistrict'],
+              categorizeIndex: categorizeIndex,
             );
           } else {
-            return THomeAddFavoriteBox(onPressed: () {});
+            return IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.add_circle_outline),
+              iconSize: 32.0,
+            );
           }
         },
       ),
@@ -429,18 +826,19 @@ class THomeFavoriteList extends StatelessWidget {
 }
 
 class THomeDeviceBox extends StatelessWidget {
-  final VoidCallback onPressed;
-  final double sqmIndex;
-
   const THomeDeviceBox({
     required this.onPressed,
     required this.sqmIndex,
+    required this.categorizeIndex,
     super.key,
   });
 
+  final VoidCallback onPressed;
+  final double sqmIndex;
+  final String Function(num) categorizeIndex;
+
   @override
   Widget build(BuildContext context) {
-    final controller = LightController();
     return Padding(
       padding: const EdgeInsets.only(right: 4.0),
       child: ElevatedButton(
@@ -492,7 +890,7 @@ class THomeDeviceBox extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             Text(
-              controller.categorizeIndex(sqmIndex),
+              categorizeIndex(sqmIndex),
               style: const TextStyle(
                 fontSize: 12.0,
                 fontFamily: 'sf-pro-display',
@@ -516,49 +914,41 @@ class THomeDeviceBox extends StatelessWidget {
   }
 }
 
-class THomeDeviceList extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
-  const THomeDeviceList(this.data, {super.key});
+class THomeHighlightList extends StatelessWidget {
+  const THomeHighlightList(this.data, {super.key});
+
+  final List<Map<String, String>> data;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 128,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: data.length + 1,
-        padding: const EdgeInsets.symmetric(horizontal: 14.0),
-        itemBuilder: (context, index) {
-          if (index < data.length) {
-            return THomeDeviceBox(
-              onPressed: () {},
-              sqmIndex: data[index]['sqmIndex'],
-            );
-          } else {
-            return IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.add_circle_outline),
-              iconSize: 32.0,
-            );
-          }
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemCount: data.length,
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      itemBuilder: (context, index) {
+        return THomeHighlighBox(
+          onPressed: () {},
+          backgroundImage: data[index]['imageUrl'] ?? '',
+          text: data[index]['text'] ?? '',
+        );
+      },
     );
   }
 }
 
 class THomeHighlighBox extends StatelessWidget {
-  final VoidCallback onPressed;
-  final String backgroundImage;
-  final String text;
   const THomeHighlighBox({
     required this.onPressed,
     required this.backgroundImage,
     required this.text,
     super.key,
   });
+
+  final VoidCallback onPressed;
+  final String backgroundImage;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -608,29 +998,6 @@ class THomeHighlighBox extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class THomeHighlightList extends StatelessWidget {
-  final List<Map<String, String>> data;
-  const THomeHighlightList(this.data, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      itemCount: data.length,
-      padding: const EdgeInsets.symmetric(horizontal: 14.0),
-      itemBuilder: (context, index) {
-        return THomeHighlighBox(
-          onPressed: () {},
-          backgroundImage: data[index]['imageUrl'] ?? '',
-          text: data[index]['text'] ?? '',
-        );
-      },
     );
   }
 }

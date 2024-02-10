@@ -67,11 +67,19 @@ class AuthController extends GetxController {
       );
       await auth.signInWithCredential(credential);
       final User? user = auth.currentUser;
-      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
-        'display name': user.displayName,
-        'email': user.email,
-        'phone number': user.phoneNumber,
-        'favorite sqm indexes': [],
+      await firestore.doc('users/${user!.uid}').get().then((doc) async {
+        print(doc.data());
+        if (!doc.exists) {
+          print('jalan');
+          await firestore.collection('users').doc(user.uid).set(
+            {
+              'display name': user.displayName,
+              'email': user.email,
+              'phone number': user.phoneNumber,
+              'favorite sqm indexes': [],
+            },
+          );
+        }
       });
       Get.offAllNamed(Routes.HOME);
       return null;

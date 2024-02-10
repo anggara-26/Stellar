@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:stellar/app/controllers/auth_controller.dart';
 
 class LightController extends GetxController {
-  String categorizeIndex(sqmIndex) {
+  AuthController authC = Get.find<AuthController>();
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  String categorizeIndex(num sqmIndex) {
     if (sqmIndex >= 21.75) {
       return 'Tempat yang sebenarnya gelap';
     } else if (sqmIndex >= 21.6) {
@@ -23,7 +28,7 @@ class LightController extends GetxController {
     }
   }
 
-  double getPercentageScale(sqmIndex) {
+  double getPercentageScale(num sqmIndex) {
     final percentage = (100 - ((sqmIndex - 17.0) * 20.0)) / 100.0;
     if (percentage < 0.0) {
       return 0.0;
@@ -32,5 +37,45 @@ class LightController extends GetxController {
     } else {
       return percentage;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> loadSqmIndexes() async {
+    QuerySnapshot<Map<String, dynamic>> sqmIndexes =
+        await firestore.collection('sqm index').get();
+    List<Map<String, dynamic>> mappedSqmIndexes = await Future.wait(
+      sqmIndexes.docs.map(
+        (element) async {
+          QuerySnapshot<Map<String, dynamic>> sqmList = await firestore
+              .collection('sqm index')
+              .doc(element.id)
+              .collection('sqm list')
+              .get();
+          return {
+            'sqm list': sqmList.docs
+                .map((e) => {'reference': '${element.id}/${e.id}', ...e.data()})
+                .toList(),
+            'city': element['city'],
+          };
+        },
+      ),
+    );
+    return mappedSqmIndexes;
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamFavoriteSqmIndex(
+      String id) {
+    return firestore
+        .collection('sqm index')
+        .doc(id.split('/')[0])
+        .collection('sqm list')
+        .doc(id.split('/')[1])
+        .snapshots();
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getFavoriteSqmIndexList() {
+    return firestore
+        .collection('users')
+        .doc(authC.auth.currentUser?.uid)
+        .snapshots();
   }
 }
