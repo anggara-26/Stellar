@@ -4,16 +4,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stellar/app/controllers/light_controller.dart';
 import 'package:stellar/app/utils/dialog.dart';
 
 class HomeController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  LightController lightC = Get.find<LightController>();
 
-  Future<void> removeFavorite(id) {
-    return firestore.collection('users').doc(auth.currentUser!.uid).update({
-      'favorite sqm indexes': FieldValue.arrayRemove([id])
-    });
+  @override
+  void onInit() {
+    lightC.startListening();
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    lightC.stopListening();
+    super.onClose();
   }
 
   void onLongPressedFavoriteCard(String id, String locationName) async {
@@ -39,7 +47,7 @@ class HomeController extends GetxController {
       Icons.delete_outline,
       onRemove: () async {
         try {
-          await removeFavorite(id);
+          lightC.removeFavoriteSqmIndex(id);
           Get.back();
           Get.snackbar(
             "Berhasil",

@@ -10,16 +10,12 @@ import '../controllers/home_controller.dart';
 class HomeView extends GetView<HomeController> {
   final authC = Get.find<AuthController>();
   final lightC = Get.put(LightController());
+  final homeC = Get.put(HomeController());
   final List<Map<String, dynamic>> dummyFavoriteData = [
     {'sqmIndex': 17.0, 'city': 'Tangerang Selatan', 'subdistrict': 'Serpong'},
     {'sqmIndex': 18.60, 'city': 'Depok', 'subdistrict': 'Margonda'},
     {'sqmIndex': 21.60, 'city': 'Harapan Indah', 'subdistrict': 'Taman Sari'},
   ];
-  // final Map<String, dynamic> dummyTerdekatData = {
-  //   'sqmIndex': 18.3,
-  //   'city': 'Jakarta',
-  //   'subdistrict': 'Kalideres'
-  // };
   final List<Map<String, dynamic>> dummyDeviceData = [
     {'sqmIndex': 19.0},
   ];
@@ -35,18 +31,7 @@ class HomeView extends GetView<HomeController> {
   ];
 
   @override
-  void initState() {
-    lightC.startListening();
-  }
-
-  @override
-  void dispose() {
-    lightC.stopListening();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    lightC.startListening();
     return Scaffold(
       appBar: AppBar(
         title: Text('Stellar', style: Get.textTheme.titleSmall),
@@ -85,28 +70,16 @@ class HomeView extends GetView<HomeController> {
                 'city': 'Jakarta',
                 'subdistrict': 'Kalideres'
               },
-              categorizeIndex: lightC.categorizeIndex,
-              getPercentageScale: lightC.getPercentageScale,
             ),
           ),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Favorit'),
           const SizedBox(height: 12.0),
-          THomeFavoriteList(
-            onLongPressCard: controller.onLongPressedFavoriteCard,
-            getUserFavoriteSqmIndexList: lightC.getFavoriteSqmIndexList,
-            streamFavoriteSqmIndex: lightC.streamFavoriteSqmIndex,
-            loadSqmIndexes: lightC.loadSqmIndexes,
-            categorizeIndex: lightC.categorizeIndex,
-            getPercentageScale: lightC.getPercentageScale,
-          ),
+          const THomeFavoriteList(),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Perangkat Saya'),
           const SizedBox(height: 12.0),
-          THomeDeviceList(
-            data: dummyDeviceData,
-            categorizeIndex: lightC.categorizeIndex,
-          ),
+          THomeDeviceList(data: dummyDeviceData),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Highlight'),
           const SizedBox(height: 12.0),

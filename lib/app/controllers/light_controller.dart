@@ -80,15 +80,46 @@ class LightController extends GetxController {
         .snapshots();
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> streamCitySqmIndex(String id) {
-    return firestore.collection('sqm index').doc(id).snapshots();
-  }
+  // Stream<DocumentSnapshot<Map<String, dynamic>>> streamCitySqmIndex() {
+  // QuerySnapshot<Map<String, dynamic>> sqmIndexes =
+  //     await firestore.collection('sqm index').get();
+  // List<Map<String, dynamic>> mappedSqmIndexes = await Future.wait(
+  //   sqmIndexes.docs.map(
+  //     (element) async {
+  //       QuerySnapshot<Map<String, dynamic>> sqmList = await firestore
+  //           .collection('sqm index')
+  //           .doc(element.id)
+  //           .collection('sqm list')
+  //           .get();
+  //       return {
+  //         'sqm list': sqmList.docs
+  //             .map((e) => {'reference': '${element.id}/${e.id}', ...e.data()})
+  //             .toList(),
+  //         'city': element['city'],
+  //       };
+  //     },
+  //   ),
+  // );
+  // return mappedSqmIndexes;
+  // }
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getFavoriteSqmIndexList() {
     return firestore
         .collection('users')
         .doc(authC.auth.currentUser?.uid)
         .snapshots();
+  }
+
+  void addFavoriteSqmIndex(String id) {
+    firestore.collection('users').doc(authC.auth.currentUser?.uid).update({
+      'favorite sqm indexes': FieldValue.arrayUnion([id])
+    });
+  }
+
+  void removeFavoriteSqmIndex(id) {
+    firestore.collection('users').doc(authC.auth.currentUser!.uid).update({
+      'favorite sqm indexes': FieldValue.arrayRemove([id])
+    });
   }
 
   void onReadLuxFromCamera(int luxValue) async {
@@ -99,7 +130,7 @@ class LightController extends GetxController {
       final double magnitude = -2.5 *
           (MathUtils.log10(luxValue * constant / (pow(wavelength_nm, 4))));
       sqmIndex.value = MathUtils.round(magnitude, 1);
-      print('lux: $luxValue,\nmagnitude:$magnitude');
+      // print('lux: $luxValue,\nmagnitude:$magnitude');
     } catch (e) {
       print(e);
     }
@@ -110,6 +141,9 @@ class LightController extends GetxController {
   void startListening() {
     light = Light();
     try {
+      if (subscription != null) {
+        subscription!.cancel();
+      }
       subscription = light.lightSensorStream.listen(onReadLuxFromCamera);
     } on LightException catch (exception) {
       print(exception);
