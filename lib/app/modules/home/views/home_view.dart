@@ -11,6 +11,14 @@ class HomeView extends GetView<HomeController> {
   final authC = Get.find<AuthController>();
   final lightC = Get.put(LightController());
   final homeC = Get.put(HomeController());
+
+  late List<Map<String, dynamic>> menuItems = [
+    {'icon': Icons.settings_outlined, 'text': 'Pengaturan', 'onClick': () {}},
+    {'icon': Icons.home, 'text': 'Bantuan', 'onClick': () {}},
+    {'icon': Icons.info_outline, 'text': 'FAQ', 'onClick': () {}},
+    {'icon': Icons.logout_outlined, 'text': 'Keluar', 'onClick': authC.logout},
+  ];
+
   final List<Map<String, dynamic>> dummyFavoriteData = [
     {'sqmIndex': 17.0, 'city': 'Tangerang Selatan', 'subdistrict': 'Serpong'},
     {'sqmIndex': 18.60, 'city': 'Depok', 'subdistrict': 'Margonda'},
@@ -37,13 +45,18 @@ class HomeView extends GetView<HomeController> {
         title: Text('Stellar', style: Get.textTheme.titleSmall),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => TopDrawerContent(menuItems: menuItems),
+            );
+          },
           icon: const Icon(Icons.menu_outlined),
         ),
         actions: [
           IconButton(
-            onPressed: () => authC.logout(),
-            icon: const Icon(Icons.logout),
+            onPressed: () => {},
+            icon: const Icon(Icons.notifications_outlined),
           ),
         ],
       ),

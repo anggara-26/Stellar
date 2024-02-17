@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +46,7 @@ class HomeController extends GetxController {
       onRemove: () async {
         try {
           lightC.removeFavoriteSqmIndex(id);
-          Get.back();
+          Get.back(closeOverlays: true);
           Get.snackbar(
             "Berhasil",
             "Berhasil menghapus $locationName dari daftar favorit",
@@ -56,7 +54,7 @@ class HomeController extends GetxController {
             colorText: Colors.white,
           );
         } on FirebaseException catch (_) {
-          Get.back();
+          Get.back(closeOverlays: true);
           Get.snackbar(
             "Gagal",
             "Gagal menghapus $locationName dari daftar favorit",

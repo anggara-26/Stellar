@@ -136,6 +136,20 @@ class LightController extends GetxController {
     }
   }
 
+  // void onReadLuxFromCameraa(double luxValue) async {
+  //   const wavelength_nm = 550;
+  //   const constant = 2.54 * 10e-10;
+
+  //   try {
+  //     final double magnitude = -2.5 *
+  //         (MathUtils.log10(luxValue * constant / (pow(wavelength_nm, 4))));
+  //     sqmIndex.value = MathUtils.round(magnitude, 1);
+  //     // print('lux: $luxValue,\nmagnitude:$magnitude');
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
   void stopListening() => subscription!.cancel();
 
   void startListening() {
