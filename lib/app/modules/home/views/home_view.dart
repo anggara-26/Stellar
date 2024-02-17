@@ -15,11 +15,11 @@ class HomeView extends GetView<HomeController> {
     {'sqmIndex': 18.60, 'city': 'Depok', 'subdistrict': 'Margonda'},
     {'sqmIndex': 21.60, 'city': 'Harapan Indah', 'subdistrict': 'Taman Sari'},
   ];
-  final Map<String, dynamic> dummyTerdekatData = {
-    'sqmIndex': 18.3,
-    'city': 'Jakarta',
-    'subdistrict': 'Kalideres'
-  };
+  // final Map<String, dynamic> dummyTerdekatData = {
+  //   'sqmIndex': 18.3,
+  //   'city': 'Jakarta',
+  //   'subdistrict': 'Kalideres'
+  // };
   final List<Map<String, dynamic>> dummyDeviceData = [
     {'sqmIndex': 19.0},
   ];
@@ -35,7 +35,18 @@ class HomeView extends GetView<HomeController> {
   ];
 
   @override
+  void initState() {
+    lightC.startListening();
+  }
+
+  @override
+  void dispose() {
+    lightC.stopListening();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    lightC.startListening();
     return Scaffold(
       appBar: AppBar(
         title: Text('Stellar', style: Get.textTheme.titleSmall),
@@ -67,10 +78,16 @@ class HomeView extends GetView<HomeController> {
           const SizedBox(height: 24.0),
           const THomeSectionTitle(title: 'Terdekat'),
           const SizedBox(height: 12.0),
-          THomeTerdekat(
-            data: dummyTerdekatData,
-            categorizeIndex: lightC.categorizeIndex,
-            getPercentageScale: lightC.getPercentageScale,
+          Obx(
+            () => THomeTerdekat(
+              data: {
+                'sqmIndex': lightC.sqmIndex.value,
+                'city': 'Jakarta',
+                'subdistrict': 'Kalideres'
+              },
+              categorizeIndex: lightC.categorizeIndex,
+              getPercentageScale: lightC.getPercentageScale,
+            ),
           ),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Favorit'),

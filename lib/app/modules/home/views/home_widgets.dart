@@ -522,7 +522,6 @@ Future<dynamic> showAddFavoriteModal(
             controller: scrollController,
             scrollDirection: Axis.vertical,
             child: Padding(
-              // width: Get.size.width,
               padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 12.0,

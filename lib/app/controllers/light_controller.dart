@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:light/light.dart';
+import 'package:basic_utils/basic_utils.dart';
 import 'package:stellar/app/controllers/auth_controller.dart';
 
 class LightController extends GetxController {
   AuthController authC = Get.find<AuthController>();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Light light = Light();
+  StreamSubscription? subscription;
+  RxDouble sqmIndex = 0.0.obs;
 
   String categorizeIndex(num sqmIndex) {
     if (sqmIndex >= 21.75) {
@@ -72,10 +80,39 @@ class LightController extends GetxController {
         .snapshots();
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamCitySqmIndex(String id) {
+    return firestore.collection('sqm index').doc(id).snapshots();
+  }
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> getFavoriteSqmIndexList() {
     return firestore
         .collection('users')
         .doc(authC.auth.currentUser?.uid)
         .snapshots();
+  }
+
+  void onReadLuxFromCamera(int luxValue) async {
+    const wavelength_nm = 550;
+    const constant = 2.54 * 10e-10;
+
+    try {
+      final double magnitude = -2.5 *
+          (MathUtils.log10(luxValue * constant / (pow(wavelength_nm, 4))));
+      sqmIndex.value = MathUtils.round(magnitude, 1);
+      print('lux: $luxValue,\nmagnitude:$magnitude');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void stopListening() => subscription!.cancel();
+
+  void startListening() {
+    light = Light();
+    try {
+      subscription = light.lightSensorStream.listen(onReadLuxFromCamera);
+    } on LightException catch (exception) {
+      print(exception);
+    }
   }
 }
