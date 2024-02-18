@@ -6,6 +6,8 @@ import '../modules/email_verification/bindings/email_verification_binding.dart';
 import '../modules/email_verification/views/email_verification_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/learn/bindings/learn_binding.dart';
+import '../modules/learn/views/learn_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -50,6 +52,11 @@ class AppPages {
       name: _Paths.EMAIL_VERIFICATION,
       page: () => EmailVerificationView(),
       binding: EmailVerificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.LEARN,
+      page: () => const LearnView(),
+      binding: LearnBinding(),
     ),
   ];
 }

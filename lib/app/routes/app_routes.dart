@@ -9,6 +9,7 @@ abstract class Routes {
   static const DEVICE = _Paths.DEVICE;
   static const SHOP = _Paths.SHOP;
   static const EMAIL_VERIFICATION = _Paths.EMAIL_VERIFICATION;
+  static const LEARN = _Paths.LEARN;
 }
 
 abstract class _Paths {
@@ -19,4 +20,5 @@ abstract class _Paths {
   static const DEVICE = '/device';
   static const SHOP = '/shop';
   static const EMAIL_VERIFICATION = '/email-verification';
+  static const LEARN = '/learn';
 }

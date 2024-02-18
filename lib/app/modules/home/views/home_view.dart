@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:stellar/app/controllers/auth_controller.dart';
 import 'package:stellar/app/controllers/light_controller.dart';
 import 'package:stellar/app/modules/home/views/home_widgets.dart';
-
-import '../controllers/home_controller.dart';
+import 'package:stellar/app/modules/home/controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   final authC = Get.find<AuthController>();
