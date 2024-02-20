@@ -4,7 +4,7 @@ import 'package:stellar/app/utils/colors.dart';
 class THomeHighlightList extends StatelessWidget {
   const THomeHighlightList(this.data, {super.key});
 
-  final List<Map<String, String>> data;
+  final List<Map<String, dynamic>> data;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class THomeHighlightList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14.0),
       itemBuilder: (context, index) {
         return THomeHighlighBox(
-          onPressed: () {},
+          onPressed: data[index]['onPressed'],
           backgroundImage: data[index]['imageUrl'] ?? '',
           text: data[index]['text'] ?? '',
         );

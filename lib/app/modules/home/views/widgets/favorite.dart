@@ -21,7 +21,6 @@ class THomeFavoriteList extends StatelessWidget {
         builder: (BuildContext context,
             AsyncSnapshot<DocumentSnapshot> userSnapshot) {
           final favoriteIds = userSnapshot.data?['favorite sqm indexes'] ?? [];
-          print(favoriteIds);
           if (userSnapshot.hasError) {
             return const Text('Something went wrong');
           }
@@ -230,6 +229,7 @@ Future<dynamic> showAddFavoriteModal(
 ) {
   LightController lightC = Get.find<LightController>();
   return showModalBottomSheet(
+    useRootNavigator: true,
     scrollControlDisabledMaxHeightRatio: 0.9,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
@@ -275,7 +275,7 @@ Future<dynamic> showAddFavoriteModal(
                             color: Colors.white,
                           ),
                         ),
-                        onPressed: () => Get.back(),
+                        onPressed: () => Navigator.pop(context),
                       )
                     ],
                   ),

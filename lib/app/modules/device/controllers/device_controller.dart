@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class DeviceController extends GetxController {
+class DevicePageController extends GetxController {
   //TODO: Implement DeviceController
 
   final count = 0.obs;

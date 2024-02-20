@@ -50,6 +50,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
+    databaseURL:
+        'https://kreasi-anak-seni-default-rtdb.asia-southeast1.firebasedatabase.app/',
     apiKey: 'AIzaSyB-Ek2KJDiZmuB2dJyp3vARg5wX8MecFyc',
     appId: '1:144495025008:android:58b583ad474e5c2fcd4db5',
     messagingSenderId: '144495025008',
@@ -58,6 +60,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    databaseURL:
+        'https://kreasi-anak-seni-default-rtdb.asia-southeast1.firebasedatabase.app/',
     apiKey: 'AIzaSyBZPdMKIYZYKDbbGuKbBEATe-_oBJT2zcg',
     appId: '1:144495025008:ios:7b42c31c4e9b232acd4db5',
     messagingSenderId: '144495025008',

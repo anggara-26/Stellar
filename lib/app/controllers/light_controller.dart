@@ -80,29 +80,6 @@ class LightController extends GetxController {
         .snapshots();
   }
 
-  // Stream<DocumentSnapshot<Map<String, dynamic>>> streamCitySqmIndex() {
-  // QuerySnapshot<Map<String, dynamic>> sqmIndexes =
-  //     await firestore.collection('sqm index').get();
-  // List<Map<String, dynamic>> mappedSqmIndexes = await Future.wait(
-  //   sqmIndexes.docs.map(
-  //     (element) async {
-  //       QuerySnapshot<Map<String, dynamic>> sqmList = await firestore
-  //           .collection('sqm index')
-  //           .doc(element.id)
-  //           .collection('sqm list')
-  //           .get();
-  //       return {
-  //         'sqm list': sqmList.docs
-  //             .map((e) => {'reference': '${element.id}/${e.id}', ...e.data()})
-  //             .toList(),
-  //         'city': element['city'],
-  //       };
-  //     },
-  //   ),
-  // );
-  // return mappedSqmIndexes;
-  // }
-
   Stream<DocumentSnapshot<Map<String, dynamic>>> getFavoriteSqmIndexList() {
     return firestore
         .collection('users')
@@ -135,20 +112,6 @@ class LightController extends GetxController {
       print(e);
     }
   }
-
-  // void onReadLuxFromCameraa(double luxValue) async {
-  //   const wavelength_nm = 550;
-  //   const constant = 2.54 * 10e-10;
-
-  //   try {
-  //     final double magnitude = -2.5 *
-  //         (MathUtils.log10(luxValue * constant / (pow(wavelength_nm, 4))));
-  //     sqmIndex.value = MathUtils.round(magnitude, 1);
-  //     // print('lux: $luxValue,\nmagnitude:$magnitude');
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   void stopListening() => subscription!.cancel();
 

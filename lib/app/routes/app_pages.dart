@@ -1,11 +1,15 @@
 import 'package:get/get.dart';
 
 import '../modules/device/bindings/device_binding.dart';
+import '../modules/device/device_detail/bindings/device_detail_binding.dart';
+import '../modules/device/device_detail/views/device_detail_view.dart';
 import '../modules/device/views/device_view.dart';
 import '../modules/email_verification/bindings/email_verification_binding.dart';
 import '../modules/email_verification/views/email_verification_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/landing/bindings/landing_binding.dart';
+import '../modules/landing/views/landing_view.dart';
 import '../modules/learn/bindings/learn_binding.dart';
 import '../modules/learn/views/learn_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -20,7 +24,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.LANDING;
 
   static final routes = [
     GetPage(
@@ -40,8 +44,15 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DEVICE,
-      page: () => const DeviceView(),
+      page: () => DeviceView(),
       binding: DeviceBinding(),
+      children: [
+        GetPage(
+          name: _Paths.DEVICE_DETAIL,
+          page: () => DeviceDetailView(),
+          binding: DeviceDetailBinding(),
+        ),
+      ],
     ),
     GetPage(
       name: _Paths.SHOP,
@@ -57,6 +68,11 @@ class AppPages {
       name: _Paths.LEARN,
       page: () => const LearnView(),
       binding: LearnBinding(),
+    ),
+    GetPage(
+      name: _Paths.LANDING,
+      page: () => LandingView(),
+      binding: LandingBinding(),
     ),
   ];
 }

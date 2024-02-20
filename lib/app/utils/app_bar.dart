@@ -1,7 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:stellar/app/controllers/auth_controller.dart';
 import 'package:stellar/app/utils/colors.dart';
 import 'package:stellar/app/utils/decorations.dart';
+import 'package:stellar/app/utils/dialog.dart';
+
+class TAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const TAppBar({required this.authC, super.key});
+  final AuthController authC;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> menuItems = [
+      {
+        'icon': Icons.settings_outlined,
+        'text': 'Pengaturan',
+        'onClick': () {
+          TUnderDevelopmentAlertDialog.show('Pengaturan');
+        }
+      },
+      {
+        'icon': Icons.home,
+        'text': 'Bantuan',
+        'onClick': () {
+          TUnderDevelopmentAlertDialog.show('Bantuan');
+        }
+      },
+      {
+        'icon': Icons.info_outline,
+        'text': 'FAQ',
+        'onClick': () {
+          TUnderDevelopmentAlertDialog.show('FAQ');
+        }
+      },
+      {
+        'icon': Icons.logout_outlined,
+        'text': 'Keluar',
+        'onClick': authC.logout
+      },
+    ];
+    return AppBar(
+      title: const Text(
+        'Stellar',
+        style: TextStyle(
+          fontFamily: 'sf-pro-display',
+          color: TColors.textBodyColor,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      centerTitle: true,
+      leading: IconButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => TopDrawerContent(menuItems: menuItems),
+          );
+        },
+        icon: const Icon(Icons.menu_outlined),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () => TUnderDevelopmentAlertDialog.show('Notifikasi'),
+          icon: const Icon(Icons.notifications_outlined),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
 
 class TopDrawerContent extends StatefulWidget {
   const TopDrawerContent({required this.menuItems, super.key});
@@ -82,45 +151,6 @@ class _TopDrawerContentState extends State<TopDrawerContent>
                   );
                 }),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class THomeDisplayName extends StatelessWidget {
-  const THomeDisplayName(this.name, {super.key});
-
-  final String? name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Text(
-        name != null ? 'Halo, $name!' : 'Halo!',
-        style: Get.textTheme.titleSmall,
-      ),
-    );
-  }
-}
-
-class THomeSectionTitle extends StatelessWidget {
-  const THomeSectionTitle({required this.title, super.key});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 12.0,
-          fontFamily: 'sf-pro-display',
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF999999),
         ),
       ),
     );

@@ -13,6 +13,7 @@ import 'app/routes/app_pages.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    name: 'Stellar',
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
             title: "Stellar",
             initialRoute:
                 snapshot.data != null && snapshot.data?.emailVerified == true
-                    ? Routes.HOME
+                    ? Routes.LANDING
                     : Routes.LOGIN,
             getPages: AppPages.routes,
           );

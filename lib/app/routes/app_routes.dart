@@ -10,6 +10,8 @@ abstract class Routes {
   static const SHOP = _Paths.SHOP;
   static const EMAIL_VERIFICATION = _Paths.EMAIL_VERIFICATION;
   static const LEARN = _Paths.LEARN;
+  static const LANDING = _Paths.LANDING;
+  static const DEVICE_DETAIL = _Paths.DEVICE + _Paths.DEVICE_DETAIL;
 }
 
 abstract class _Paths {
@@ -21,4 +23,6 @@ abstract class _Paths {
   static const SHOP = '/shop';
   static const EMAIL_VERIFICATION = '/email-verification';
   static const LEARN = '/learn';
+  static const LANDING = '/landing';
+  static const DEVICE_DETAIL = '/device-detail';
 }

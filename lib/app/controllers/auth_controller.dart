@@ -28,7 +28,7 @@ class AuthController extends GetxController {
       );
 
       if (user.user!.emailVerified) {
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.LANDING);
         return null;
       } else {
         Get.toNamed(Routes.EMAIL_VERIFICATION);
@@ -81,7 +81,7 @@ class AuthController extends GetxController {
           );
         }
       });
-      Get.offAllNamed(Routes.HOME);
+      Get.offAllNamed(Routes.LANDING);
       return null;
     } catch (e) {
       return [
@@ -113,7 +113,7 @@ class AuthController extends GetxController {
       });
       user.updateDisplayName(fullName);
       if (user.emailVerified) {
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.LANDING);
         return null;
       } else {
         return ['success', 'Berhasil', 'Akun Anda telah berhasil didaftarkan'];
@@ -157,7 +157,7 @@ class AuthController extends GetxController {
       await auth.currentUser?.reload();
       if (auth.currentUser!.emailVerified) {
         timer.cancel();
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.LANDING);
       }
     });
   }

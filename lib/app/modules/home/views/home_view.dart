@@ -2,62 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stellar/app/controllers/auth_controller.dart';
 import 'package:stellar/app/controllers/light_controller.dart';
-import 'package:stellar/app/modules/home/views/home_widgets.dart';
-import 'package:stellar/app/modules/home/controllers/home_controller.dart';
+import 'package:stellar/app/controllers/device_controller.dart';
+import 'package:stellar/app/utils/app_bar.dart';
+import 'package:stellar/app/utils/dialog.dart';
+
+import './home_widgets.dart';
+import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  final authC = Get.find<AuthController>();
-  final lightC = Get.put(LightController());
-  final homeC = Get.put(HomeController());
-
-  late List<Map<String, dynamic>> menuItems = [
-    {'icon': Icons.settings_outlined, 'text': 'Pengaturan', 'onClick': () {}},
-    {'icon': Icons.home, 'text': 'Bantuan', 'onClick': () {}},
-    {'icon': Icons.info_outline, 'text': 'FAQ', 'onClick': () {}},
-    {'icon': Icons.logout_outlined, 'text': 'Keluar', 'onClick': authC.logout},
-  ];
-
-  final List<Map<String, dynamic>> dummyFavoriteData = [
-    {'sqmIndex': 17.0, 'city': 'Tangerang Selatan', 'subdistrict': 'Serpong'},
-    {'sqmIndex': 18.60, 'city': 'Depok', 'subdistrict': 'Margonda'},
-    {'sqmIndex': 21.60, 'city': 'Harapan Indah', 'subdistrict': 'Taman Sari'},
-  ];
-  final List<Map<String, dynamic>> dummyDeviceData = [
-    {'sqmIndex': 19.0},
-  ];
-  final List<Map<String, String>> dummyHighlightData = [
-    {
-      'imageUrl': 'assets/images/highlight_1.png',
-      'text': 'Petunjuk Fitur Aplikasi Stellar'
-    },
-    {
-      'imageUrl': 'assets/images/highlight_2.png',
-      'text': 'Pengertian dan dampak polusi cahaya'
-    }
-  ];
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authC = Get.find<AuthController>();
+    final lightC = Get.find<LightController>();
+    final homeC = Get.find<HomeController>();
+    final deviceC = Get.find<DeviceController>();
+
+    final List<Map<String, dynamic>> dummyHighlightData = [
+      {
+        'imageUrl': 'assets/images/highlight_1.png',
+        'text': 'Petunjuk Fitur Aplikasi Stellar',
+        'onPressed': () {
+          TUnderDevelopmentAlertDialog.show('Petunjuk Fitur Aplikasi Stellar');
+        }
+      },
+      {
+        'imageUrl': 'assets/images/highlight_2.png',
+        'text': 'Pengertian dan dampak polusi cahaya',
+        'onPressed': () {
+          TUnderDevelopmentAlertDialog.show(
+              'Pengertian dan dampak polusi cahaya');
+        }
+      }
+    ];
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Stellar', style: Get.textTheme.titleSmall),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => TopDrawerContent(menuItems: menuItems),
-            );
-          },
-          icon: const Icon(Icons.menu_outlined),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => {},
-            icon: const Icon(Icons.notifications_outlined),
-          ),
-        ],
-      ),
+      appBar: TAppBar(authC: authC),
       body: ListView(
         physics: const ScrollPhysics(),
         shrinkWrap: true,
@@ -66,7 +47,9 @@ class HomeView extends GetView<HomeController> {
           THomeDisplayName(authC.auth.currentUser?.displayName?.split(' ')[0]),
           const SizedBox(height: 20.0),
           THomeBanner(
-            onPressed: () {},
+            onPressed: () {
+              TUnderDevelopmentAlertDialog.show('Alert Polusi Cahaya');
+            },
             backgroundImage: const AssetImage('assets/images/home_banner.png'),
             icon: Icons.add_circle_outline,
             text: 'Dapatkan alert polusi cahaya di lokasi anda',
@@ -90,7 +73,7 @@ class HomeView extends GetView<HomeController> {
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Perangkat Saya'),
           const SizedBox(height: 12.0),
-          THomeDeviceList(data: dummyDeviceData),
+          THomeDeviceList(deviceRef: deviceC.deviceRef),
           const SizedBox(height: 12.0),
           const THomeSectionTitle(title: 'Highlight'),
           const SizedBox(height: 12.0),

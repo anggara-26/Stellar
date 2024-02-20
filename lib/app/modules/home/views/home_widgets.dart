@@ -1,6 +1,7 @@
-export 'package:stellar/app/modules/home/views/widgets/top_drawer_content.dart';
-export 'package:stellar/app/modules/home/views/widgets/banner.dart';
-export 'package:stellar/app/modules/home/views/widgets/terdekat.dart';
-export 'package:stellar/app/modules/home/views/widgets/favorite.dart';
-export 'package:stellar/app/modules/home/views/widgets/device.dart';
-export 'package:stellar/app/modules/home/views/widgets/highlight.dart';
+export './widgets/display_name.dart';
+export './widgets/section_title.dart';
+export './widgets/banner.dart';
+export './widgets/terdekat.dart';
+export './widgets/favorite.dart';
+export './widgets/device.dart';
+export './widgets/highlight.dart';

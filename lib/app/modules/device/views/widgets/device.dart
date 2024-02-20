@@ -3,10 +3,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stellar/app/controllers/light_controller.dart';
-import 'package:stellar/app/modules/landing/controllers/landing_controller.dart';
 import 'package:stellar/app/routes/app_pages.dart';
 import 'package:stellar/app/utils/colors.dart';
-import 'package:stellar/app/utils/dialog.dart';
 
 class THomeDeviceList extends StatelessWidget {
   const THomeDeviceList({
@@ -19,41 +17,25 @@ class THomeDeviceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LightController lightC = Get.find<LightController>();
-    LandingController landingC = Get.find<LandingController>();
-    return SizedBox(
-      height: 128,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          FirebaseAnimatedList(
-            query: deviceRef(),
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 14.0),
-            itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                Animation<double> animation, int index) {
-              Map data = snapshot.value as Map;
-              data['key'] = snapshot.key;
-              return THomeDeviceBox(
-                onPressed: () {
-                  landingC.changeTabIndex(1);
-                  Get.toNamed(Routes.DEVICE_DETAIL, id: 2, arguments: data);
-                },
-                sqmIndex: (data['sqm index'] as int).toDouble(),
-                categorizeIndex: lightC.categorizeIndex,
-              );
-            },
-          ),
-          IconButton(
-            onPressed: () {
-              TUnderDevelopmentAlertDialog.show('Tambah Perangkat');
-            },
-            icon: const Icon(Icons.add_circle_outline),
-            iconSize: 32.0,
-          ),
-        ],
-      ),
+
+    return FirebaseAnimatedList(
+      query: deviceRef(),
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      padding: const EdgeInsets.symmetric(horizontal: 28.0),
+      itemBuilder: (BuildContext context, DataSnapshot snapshot,
+          Animation<double> animation, int index) {
+        Map data = snapshot.value as Map;
+        data['key'] = snapshot.key;
+        return THomeDeviceBox(
+          onPressed: () {
+            Get.toNamed(Routes.DEVICE_DETAIL, id: 2, arguments: data);
+          },
+          sqmIndex: (data['sqm index'] as int).toDouble(),
+          categorizeIndex: lightC.categorizeIndex,
+        );
+      },
     );
   }
 }
@@ -73,15 +55,15 @@ class THomeDeviceBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 4.0),
+      padding: const EdgeInsets.only(bottom: 10.0),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
-          fixedSize: const Size(192, 0),
+          fixedSize: const Size(0, 128),
           backgroundColor: TColors.primaryColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(10.0),
           ),
         ),
         child: Column(
